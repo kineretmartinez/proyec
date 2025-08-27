@@ -48,6 +48,10 @@
             width: 100%;
             text-align: center;
         }
+        .nav-link {
+            color: #0c0c0c;
+            background: #c4af94; ;
+        }
     </style>
 </head>
 <body class="p-3">
@@ -65,7 +69,11 @@
                     <option value="2025">2025</option>
                     <option value="2024">2024</option>
                     <option value="2023">2023</option>
+                    <option value="2022">2022</option>
+                    <option value="2021">2021</option>
+                    <option value="2020">2020</option>
                 </select>
+                <a href="/logout" class="btn btn-danger">Cerrar Sesión</a>
             </div>
         </div>
     </header>
@@ -74,16 +82,16 @@
 
         <ul class="nav nav-tabs" id="myTab" role="tablist">
             <li class="nav-item" role="presentation">
-                <button class="nav-link active" id="pulso-tab" data-bs-toggle="tab" data-bs-target="#pulso" type="button" role="tab" aria-controls="pulso" aria-selected="true">Pulso Social</button>
+                <button class="nav-link active shadow-lg" id="pulso-tab" data-bs-toggle="tab" data-bs-target="#pulso" type="button" role="tab" aria-controls="pulso" aria-selected="true">Pulso Social</button>
             </li>
             <li class="nav-item" role="presentation">
-                <button class="nav-link" id="educacion-cultura-tab" data-bs-toggle="tab" data-bs-target="#educacion-cultura" type="button" role="tab" aria-controls="educacion-cultura" aria-selected="false">Educación y Cultura</button>
+                <button class="nav-link shadow-lg" id="educacion-cultura-tab" data-bs-toggle="tab" data-bs-target="#educacion-cultura" type="button" role="tab" aria-controls="educacion-cultura" aria-selected="false">Educación y Cultura</button>
             </li>
             <li class="nav-item" role="presentation">
-                <button class="nav-link" id="salud-bienestar-tab" data-bs-toggle="tab" data-bs-target="#salud-bienestar" type="button" role="tab" aria-controls="salud-bienestar" aria-selected="false">Salud y Bienestar</button>
+                <button class="nav-link shadow-lg" id="salud-bienestar-tab" data-bs-toggle="tab" data-bs-target="#salud-bienestar" type="button" role="tab" aria-controls="salud-bienestar" aria-selected="false">Salud y Bienestar</button>
             </li>
             <li class="nav-item" role="presentation">
-                <button class="nav-link" id="inclusion-vivienda-seguridad-tab" data-bs-toggle="tab" data-bs-target="#inclusion-vivienda-seguridad" type="button" role="tab" aria-controls="inclusion-vivienda-seguridad" aria-selected="false">Inclusión, Vivienda y Seguridad</button>
+                <button class="nav-link shadow-lg" id="inclusion-vivienda-seguridad-tab" data-bs-toggle="tab" data-bs-target="#inclusion-vivienda-seguridad" type="button" role="tab" aria-controls="inclusion-vivienda-seguridad" aria-selected="false">Inclusión, Vivienda y Seguridad</button>
             </li>
         </ul>
 

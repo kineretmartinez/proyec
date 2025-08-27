@@ -34,26 +34,43 @@ function isAuthenticated(req, res, next) {
 
 // Rutas de Autenticación
 app.get('/login', (req, res) => {
-    res.render('login', { error: null });
+    // La primera vez que se carga la página, no hay error
+    res.render('login', { error: null }); 
 });
 
 app.post('/login', async (req, res) => {
     const { email, password } = req.body;
     try {
         const [rows] = await db.query('SELECT * FROM usuarios WHERE email = ?', [email]);
+        
         if (rows.length > 0) {
             const user = rows[0];
             const match = await bcrypt.compare(password, user.password);
+            
             if (match) {
+                // Credenciales correctas: Inicia sesión y redirige
                 req.session.userId = user.id;
                 return res.redirect('/');
             }
         }
+        
+        // Si no se encontró el email o la contraseña no coincide, 
+        // renderiza la página de login con un mensaje de error.
         res.render('login', { error: 'Email o contraseña incorrectos.' });
+        
     } catch (error) {
         console.error('Error en el login:', error);
         res.status(500).send('Error interno del servidor.');
     }
+});
+app.get('/logout', (req, res) => {
+    req.session.destroy(err => {
+        if (err) {
+            return res.redirect('/');
+        }
+        res.clearCookie('connect.sid');
+        res.redirect('/login');
+    });
 });
 
 app.get('/register', (req, res) => {
