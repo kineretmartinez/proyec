@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel Admin | Gestión de Usuarios ICCDSC</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0/dist/chartjs-plugin-datalabels.min.js"></script>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+
+    <style>
+        body {
+            background-color: #9f2241; 
+            color: white;
+        }
+        .logo {
+            height: 60px;
+        }
+        .offcanvas-header {
+            background-color: #9f2241;
+            color: white;
+        }
+        .menu-btn {
+            background-color: #ffc107; 
+            color: #212529;
+            font-weight: bold;
+            border: none;
+        }
+        .admin-card {
+            background-color: #f8f9fa; 
+            color: #212529; 
+            padding: 25px;
+            border-radius: 15px;
+        }
+        .table-dark {
+            background-color: #343a40 !important;
+            color: white;
+        }
+        .btn-toggle-acceso.active { background-color: #28a745; border-color: #28a745; color: white; }
+        .btn-toggle-acceso.inactive { background-color: #dc3545; border-color: #dc3545; color: white; }
+    </style>
+</head>
+
+<body class="p-3">
+
+    <header class="mb-4">
+        <div class="d-flex justify-content-between align-items-center bg-light p-3 rounded-4 shadow">
+            <div class="d-flex gap-3 align-items-center">
+                <a href="/">
+                    <img src="https://campeche.gob.mx/wp-content/uploads/2023/04/logoh.png" alt="Gobierno de Campeche" class="logo">
+                </a>
+            </div>
+            
+            <div class="d-flex flex-column align-items-center me-auto ms-auto text-dark">
+                <h1>Panel de Administración</h1>
+                <h3>Control de Acceso y Roles de Usuarios</h3>
+            </div>
+
+            <button class="btn btn-secondary" type="button" data-bs-toggle="offcanvas" data-bs-target="#menuAdmin" aria-controls="menuAdmin">
+                Menú
+            </button>
+        </div>
+    </header>
+
+    <div class="offcanvas offcanvas-end" tabindex="-1" id="menuAdmin" aria-labelledby="menuAdminLabel">
+        <div class="offcanvas-header">
+            <h5 id="menuAdminLabel">Opciones</h5>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas" aria-label="Cerrar"></button>
+        </div>
+        <div class="offcanvas-body">
+            <ul class="list-group">
+                <li class="list-group-item">
+                    <a href="/" class="text-decoration-none text-dark fw-bold">
+                        🏠 Volver al Dashboard
+                    </a>
+                </li>
+                
+                <% if (typeof user !== 'undefined' && user.rol === 'admin') { %>
+                    <li class="list-group-item active bg-warning text-dark">
+                        <a href="/admin/usuarios" class="text-decoration-none text-dark fw-bold">
+                            🔧 Gestión de Usuarios (Actual)
+                        </a>
+                    </li>
+                <% } %>
+
+                <% if (typeof user !== 'undefined' && (user.rol === 'admin' || user.rol === 'usuario_tecnico')) { %>
+                    <li class="list-group-item">
+                        <a href="/admin/carga-datos" class="text-decoration-none text-dark fw-bold">
+                            📊 Carga de Datos
+                        </a>
+                    </li>
+                <% } %>
+
+                <li class="list-group-item">
+                    <a href="/logout" class="text-decoration-none text-danger fw-bold">
+                        🚪 Cerrar Sesión
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+    
+    <main class="container mt-4">
+        <div class="admin-card shadow-lg">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h4 class="text-dark">Gestión de Usuarios</h4>
+                <button class="btn btn-success">➕ Crear Nuevo Usuario</button>
+            </div>
+
+            <div class="table-responsive">
+                <table class="table table-hover align-middle">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>ID</th>
+                            <th>Nombre</th>
+                            <th>Email</th>
+                            <th>Rol</th>
+                            <th>Estado</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% usuarios.forEach(user => { %>
+                            <tr id="user-<%= user.id %>">
+                                <td><%= user.id %></td>
+                                <td><%= user.nombre %></td>
+                                <td><%= user.email %></td>
+                                <td>
+                                    <select class="form-select form-select-sm" 
+                                            data-user-id="<%= user.id %>" 
+                                            onchange="cambiarRol(this)">
+                                        <option value="admin" <%= user.rol === 'admin' ? 'selected' : '' %>>Administrador</option>
+                                        <option value="usuario_tecnico" <%= user.rol === 'usuario_tecnico' ? 'selected' : '' %>>Usuario Técnico</option>
+                                        <option value="usuario_normal" <%= user.rol !== 'admin' && user.rol !== 'usuario_tecnico' ? 'selected' : '' %>>Usuario Normal</option>
+                                    </select>
+                                </td>
+                                <td>
+                                    <span class="badge <%= user.activo === 1 ? 'bg-success' : 'bg-danger' %>" id="estado-<%= user.id %>">
+                                        <%= user.activo === 1 ? 'Activo' : 'Inactivo' %>
+                                    </span>
+                                </td>
+                                <td>
+                                    <button class="btn btn-sm btn-toggle-acceso <%= user.activo === 1 ? 'active' : 'inactive' %>" 
+                                            data-user-id="<%= user.id %>" 
+                                            onclick="toggleAcceso(this)">
+                                        <%= user.activo === 1 ? 'Desactivar' : 'Activar' %>
+                                    </button>
+                                </td>
+                            </tr>
+                        <% }); %>
+                    </tbody>
+                </table>
+            </div>
+
+        </div>
+    </main>
+
+    <div class="d-flex justify-content-between align-items-center bg-light p-3 rounded-4 shadow mt-4">
+        <div class="d-flex gap-3 align-items-center">
+            <img src="https://campeche.gob.mx/wp-content/uploads/2023/04/logoh.png" alt="Gobierno de Campeche" class="logo">
+            <img src="https://cedyc.campeche.gob.mx/wp-content/uploads/2023/05/Gabinete/curriculum/Logo_cedyc_horizontal.svg" alt="CEDYC" class="logo">
+            <img src="https://th.bing.com/th/id/R.70f86f90b79935c5277de32f0cc535a0?rik=vvSvN%2b8aZjkeOA&riu=http%3a%2f%2fsic.gob.mx%2fimages%2f62651&ehk=Dr1LAHN94y5xu2OBSHc0b4%2ftnzTECmGHPSds9ZqT4lY%3d&risl=&pid=ImgRaw&r=0" alt="Tecnológico de Chiná" class="logo">
+            <img src="https://extranet.inegi.org.mx/assets/img/Imagen_Institucional/Logos/Logo4.jpg" alt="INEGI" class="logo">
+            <img src="https://educacioncampeche.gob.mx/img/logo.png" alt="SEDUC" class="logo">
+        </div>
+    </div>
+
+    <script>
+        async function toggleAcceso(button) {
+            const userId = button.getAttribute('data-user-id');
+            try {
+                const response = await fetch(`/admin/toggle-acceso/${userId}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                });
+                if (!response.ok) throw new Error('Error al actualizar el acceso.');
+                const data = await response.json();
+                const nuevoEstado = data.activo; 
+                const estadoSpan = document.getElementById(`estado-${userId}`);
+                
+                // Actualización del botón
+                if (nuevoEstado === 1) {
+                    button.textContent = 'Desactivar';
+                    button.classList.remove('inactive');
+                    button.classList.add('active');
+                } else {
+                    button.textContent = 'Activar';
+                    button.classList.remove('active');
+                    button.classList.add('inactive');
+                }
+                // Actualización del badge
+                estadoSpan.textContent = nuevoEstado === 1 ? 'Activo' : 'Inactivo';
+                estadoSpan.classList.remove(nuevoEstado === 1 ? 'bg-danger' : 'bg-success');
+                estadoSpan.classList.add(nuevoEstado === 1 ? 'bg-success' : 'bg-danger');
+                alert('Estado de acceso actualizado con éxito.');
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Hubo un error al actualizar el estado de acceso.');
+            }
+        }
+
+        async function cambiarRol(selectElement) {
+            const userId = selectElement.getAttribute('data-user-id');
+            const nuevoRol = selectElement.value;
+
+            if (nuevoRol === 'admin' && !confirm(`¿Estás seguro de asignar el rol de ADMINISTRADOR al usuario ID ${userId}?`)) {
+                selectElement.value = selectElement.options[selectElement.selectedIndex].originalValue; 
+                return;
+            }
+
+            try {
+                const response = await fetch(`/admin/set-rol/${userId}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ rol: nuevoRol })
+                });
+
+                if (!response.ok) throw new Error('Error al cambiar el rol.');
+
+                alert(`Rol del usuario ID ${userId} cambiado a ${nuevoRol}.`);
+
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Hubo un error al cambiar el rol.');
+                window.location.reload(); 
+            }
+        }
+
+        // Fix para guardar el valor original del select al cargar
+        document.querySelectorAll('select').forEach(select => {
+            select.options[select.selectedIndex].originalValue = select.value;
+        });
+    </script>
+
+</body>
+</html>

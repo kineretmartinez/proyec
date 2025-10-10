@@ -1,83 +1,121 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard Bienestar Social</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard Bienestar Social</title>
 
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0/dist/chartjs-plugin-datalabels.min.js"></script>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0/dist/chartjs-plugin-datalabels.min.js"></script>
-
-    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
-    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
-
-    <style>
-        body {
-            background-color: #9f2241;
-            color: white;
-        }
-        .card {
-            background-color: white;
-            color: black;
-            border-radius: 15px;
-        }
-        .logo {
-            height: 60px;
-        }
-        #map {
-            height: 400px;
-            border-radius: 10px;
-        }
-        .gauge-chart-container {
-            position: relative;
-            width: 100%;
-            height: 200px;
-        }
-        .gauge-title {
-            position: absolute;
-            top: 10px;
-            width: 100%;
-            text-align: center;
-        }
-        .gauge-value {
-            position: absolute;
-            bottom: 20px;
-            width: 100%;
-            text-align: center;
-        }
-        .nav-link {
-            color: #fbf9f9;
-            background: #bca986; ;
-        }
-    </style>
+  <style>
+    body {
+      background-color: #9f2241;
+      color: white;
+    }
+    .card {
+      background-color: white;
+      color: black;
+      border-radius: 15px;
+    }
+    .logo {
+      height: 60px;
+    }
+    #map {
+      height: 400px;
+      border-radius: 10px;
+    }
+    .nav-link {
+      color: #fbf9f9;
+      background: #bca986; 
+      margin-right: 5px;
+    }
+    .nav-link.active {
+      background: #9f2241 !important;
+      color: white !important;
+    }
+    .offcanvas-header {
+      background-color: #9f2241;
+      color: white;
+    }
+    .menu-btn {
+      background-color: #ffc107;
+      color: #212529;
+      font-weight: bold;
+      border: none;
+    }
+  </style>
 </head>
-<body class="p-3">
 
-    <header class="mb-4">
-        <div class="d-flex justify-content-between align-items-center bg-light p-3 rounded-4 shadow">
-            <div class="d-flex gap-3 align-items-center">
-                <img src="https://campeche.gob.mx/wp-content/uploads/2023/04/logoh.png" alt="Gobierno de Campeche" class="logo">
-            </div>
-            <div class="d-flex flex-column align-items-center me-auto ms-auto text-dark">
-                <h1>ICCDSC</h1>
-                <h3>Indicador clave de comportamiento de la dimensión de sociedad y Cultura</h3>
-            </div>
-            <a href="/logout" class="btn btn-danger">Cerrar Sesión</a>
-            <div>
-                <select id="filtroAno" class="form-select">
-                    <option value="2025">2025</option>
-                    <option value="2024">2024</option>
-                    <option value="2023">2023</option>
-                    <option value="2022">2022</option>
-                    <option value="2021">2021</option>
-                    <option value="2020">2020</option>
-                </select>
-                
-            </div>
-        </div>
+<body class="p-3">
+  <!-- Encabezado principal -->
+  <header class="mb-4">
+    <div class="d-flex justify-content-between align-items-center bg-light p-3 rounded-4 shadow">
+      <div class="d-flex gap-3 align-items-center">
+        <img src="https://campeche.gob.mx/wp-content/uploads/2023/04/logoh.png" alt="Gobierno de Campeche" class="logo">
+      </div>
+      
+      <div class="d-flex flex-column align-items-center me-auto ms-auto text-dark">
+        <h1>ICCDSC</h1>
+        <h3>Indicador clave de comportamiento de la dimensión de Sociedad y Cultura</h3>
+      </div>
+
+      <!-- Botón de menú lateral -->
+      <button class="btn btn-secondary" type="button" data-bs-toggle="offcanvas" data-bs-target="#menuAdmin" aria-controls="menuAdmin">
+        Menú
+      </button>
+    </div>
+  </header>
+
+  <!-- Menú lateral desplegable -->
+  <div class="offcanvas offcanvas-end" tabindex="-1" id="menuAdmin" aria-labelledby="menuAdminLabel">
+    <div class="offcanvas-header">
+      <h5 id="menuAdminLabel">Opciones</h5>
+      <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas" aria-label="Cerrar"></button>
+    </div>
+    <div class="offcanvas-body">
+      <ul class="list-group">
+        <% if (typeof user !== 'undefined' && user.rol === 'admin') { %>
+          <li class="list-group-item">
+            <a href="/admin/usuarios" class="text-decoration-none text-dark fw-bold">
+              🔧 Panel Admin
+            </a>
+          </li>
+        <% } %>
+        <% if (typeof user !== 'undefined' && (user.rol === 'admin' || user.rol === 'usuario_tecnico')) { %>
+            <li class="list-group-item">
+                <a href="/admin/carga-datos" class="text-decoration-none text-dark fw-bold">
+                 📊 Carga de Datos
+                </a>
+           </li>
+        <% } %>
+        <li class="list-group-item">
+          <a href="/" class="text-decoration-none text-dark fw-bold">
+            🏠 Volver al Dashboard
+          </a>
+        <li class="list-group-item">
+          <a href="/logout" class="text-decoration-none text-danger fw-bold">
+            🚪 Cerrar Sesión
+          </a>
+        </li>
+        <li class="list-group-item">
+          <label for="filtroAno" class="form-label fw-bold">📅 Año:</label>
+          <select id="filtroAno" class="form-select">
+            <option value="2025">2025</option>
+            <option value="2024">2024</option>
+            <option value="2023">2023</option>
+            <option value="2022">2022</option>
+            <option value="2021">2021</option>
+            <option value="2020">2020</option>
+          </select>
+        </li>
+      </ul>
+    </div>
+  </div>
     </header>
 
     <main class="container mt-4">
@@ -242,13 +280,16 @@
     </main>
 
     <script>
-        // Datos desde el servidor
+        // Datos desde el servidor (inyectados por EJS)
+        const user = <%- typeof user !== 'undefined' ? JSON.stringify(user) : '{}' %>;
         const indicadores = <%- JSON.stringify(indicadores) %>;
         const datosRadar = <%- JSON.stringify(datosRadar) %>;
         const puntosMapa = <%- JSON.stringify(puntosMapa) %>;
         const educacionCultura = <%- JSON.stringify(educacionCultura) %>;
         const saludBienestar = <%- JSON.stringify(saludBienestar) %>;
         const inclusionViviendaSeguridad = <%- JSON.stringify(inclusionViviendaSeguridad) %>;
+
+        // NOTA: Se eliminó el bloque de fetch/API, ya que no se usará.
 
         // Gráfico Radar (Pestaña Pulso Social)
         const ctxRadar = document.getElementById('radarChart').getContext('2d');
@@ -340,7 +381,7 @@
                     cutout: '50%',
                     plugins: {
                         legend: {
-                            display: false, // Desactivamos la leyenda por defecto para evitar duplicados
+                            display: false,
                         },
                         tooltip: {
                             callbacks: {
@@ -360,12 +401,9 @@
                                 size: 14,
                             },
                             formatter: (value, context) => {
-                                // Formatea el valor para que sea más legible
                                 if (context.datasetIndex === 0) {
-                                    // Anillo exterior: Muestra 'Con PC' y 'Sin PC'
                                     return `${context.chart.data.labels[context.dataIndex]}: ${value}%`;
                                 } else {
-                                    // Anillo interior: Muestra 'Con Internet' y 'Sin Internet'
                                     if (context.dataIndex === 0) {
                                         return 'Con Internet';
                                     } else {
@@ -401,7 +439,7 @@
         });
 
         document.getElementById('salud-bienestar-tab').addEventListener('shown.bs.tab', () => {
-            // 2.1 Radiografía del Sistema de Salud - Gauges
+            // Radiografía del Sistema de Salud - Gauges
             const gaugeOptions = (value, max) => ({
                 responsive: true,
                 rotation: 270,
@@ -430,7 +468,7 @@
             createGauge(document.getElementById('camasGauge'), saludBienestar.camas_hospital, 150, 'rgba(255, 159, 64, 1)');
             createGauge(document.getElementById('mortalidadGauge'), saludBienestar.mortalidad_materna, 50, 'rgba(255, 99, 132, 1)');
             
-            // 2.2 Indicador de Longevidad
+            // Indicador de Longevidad
             const ctxLongevidad = document.getElementById('longevidadChart').getContext('2d');
             new Chart(ctxLongevidad, {
                 type: 'line',
@@ -450,7 +488,7 @@
         });
 
         document.getElementById('inclusion-vivienda-seguridad-tab').addEventListener('shown.bs.tab', () => {
-            // 3.1 Medidor de Desigualdad y Pobreza
+            // Medidor de Desigualdad y Pobreza
             const ctxDesigualdad = document.getElementById('desigualdadPobrezaChart').getContext('2d');
             new Chart(ctxDesigualdad, {
                 type: 'scatter',
@@ -471,7 +509,7 @@
                 }
             });
 
-            // 3.3 Barómetro de Seguridad Ciudadana
+            // Barómetro de Seguridad Ciudadana
             const ctxSeguridad = document.getElementById('seguridadChart').getContext('2d');
             new Chart(ctxSeguridad, {
                 type: 'bar',
@@ -488,7 +526,7 @@
                 options: { responsive: true, indexAxis: 'y', scales: { x: { beginAtZero: true } } }
             });
 
-            // 3.4 Participación Ciudadana
+            // Participación Ciudadana
             const ctxParticipacion = document.getElementById('participacionChart').getContext('2d');
             const participacion = inclusionViviendaSeguridad.participacion_electoral;
             new Chart(ctxParticipacion, {
