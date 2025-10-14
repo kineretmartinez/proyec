@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -10,35 +11,45 @@
 
     <style>
         body {
-            background-color: #9f2241; /* Color principal (Rojo/Vino) */
+            background-color: #9f2241;
+            /* Color principal (Rojo/Vino) */
             color: white;
         }
+
         .logo {
             height: 60px;
         }
+
         .offcanvas-header {
             background-color: #9f2241;
             color: white;
         }
+
         .menu-btn {
-            background-color: #ffc107; /* Amarillo de advertencia */
+            background-color: #ffc107;
+            /* Amarillo de advertencia */
             color: #212529;
             font-weight: bold;
             border: none;
         }
+
         .admin-card {
-            background-color: #f8f9fa; 
-            color: #212529; /* Texto negro */
+            background-color: #f8f9fa;
+            color: #212529;
+            /* Texto negro */
             padding: 25px;
             border-radius: 15px;
         }
+
         .custom-form-group {
-            background-color: #e9ecef; /* Fondo gris claro */
+            background-color: #e9ecef;
+            /* Fondo gris claro */
             padding: 20px;
             border-radius: 10px;
             margin-bottom: 20px;
             border: 1px solid #ced4da;
         }
+
         .alert-fixed {
             position: fixed;
             top: 20px;
@@ -54,16 +65,18 @@
         <div class="d-flex justify-content-between align-items-center bg-light p-3 rounded-4 shadow">
             <div class="d-flex gap-3 align-items-center">
                 <a href="/">
-                    <img src="https://campeche.gob.mx/wp-content/uploads/2023/04/logoh.png" alt="Gobierno de Campeche" class="logo">
+                    <img src="https://campeche.gob.mx/wp-content/uploads/2023/04/logoh.png" alt="Gobierno de Campeche"
+                        class="logo">
                 </a>
             </div>
-            
+
             <div class="d-flex flex-column align-items-center me-auto ms-auto text-dark">
                 <h1>Panel de Carga de Datos</h1>
                 <h3>Alimentación de Indicadores (CSV/Excel)</h3>
             </div>
 
-            <button class="btn btn-secondary" type="button" data-bs-toggle="offcanvas" data-bs-target="#menuAdmin" aria-controls="menuAdmin">
+            <button class="btn btn-secondary" type="button" data-bs-toggle="offcanvas" data-bs-target="#menuAdmin"
+                aria-controls="menuAdmin">
                 Menú
             </button>
         </div>
@@ -72,7 +85,8 @@
     <div class="offcanvas offcanvas-end" tabindex="-1" id="menuAdmin" aria-labelledby="menuAdminLabel">
         <div class="offcanvas-header">
             <h5 id="menuAdminLabel">Opciones</h5>
-            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas" aria-label="Cerrar"></button>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas"
+                aria-label="Cerrar"></button>
         </div>
         <div class="offcanvas-body">
             <ul class="list-group">
@@ -81,32 +95,32 @@
                         🏠 Volver al Dashboard
                     </a>
                 </li>
-                
-                <% if (typeof user !== 'undefined' && (user.rol === 'admin' || user.rol === 'usuario_tecnico')) { %>
+
+                <% if (typeof user !=='undefined' && (user.rol==='admin' || user.rol==='usuario_tecnico' )) { %>
                     <li class="list-group-item active bg-warning text-dark">
                         <a href="/admin/carga-datos" class="text-decoration-none text-dark fw-bold">
                             📊 Carga de Datos (Actual)
                         </a>
                     </li>
-                <% } %>
-                
-                <% if (typeof user !== 'undefined' && user.rol === 'admin') { %>
-                    <li class="list-group-item">
-                        <a href="/admin/usuarios" class="text-decoration-none text-dark fw-bold">
-                            🔧 Gestión de Usuarios
-                        </a>
-                    </li>
-                <% } %>
-                
-                <li class="list-group-item">
-                    <a href="/logout" class="text-decoration-none text-danger fw-bold">
-                        🚪 Cerrar Sesión
-                    </a>
-                </li>
+                    <% } %>
+
+                        <% if (typeof user !=='undefined' && user.rol==='admin' ) { %>
+                            <li class="list-group-item">
+                                <a href="/admin/usuarios" class="text-decoration-none text-dark fw-bold">
+                                    🔧 Gestión de Usuarios
+                                </a>
+                            </li>
+                            <% } %>
+
+                                <li class="list-group-item">
+                                    <a href="/logout" class="text-decoration-none text-danger fw-bold">
+                                        🚪 Cerrar Sesión
+                                    </a>
+                                </li>
             </ul>
         </div>
     </div>
-    
+
     <main class="container mt-4">
         <div class="admin-card shadow-lg">
             <h4 class="text-dark mb-4">Módulo de Carga de Indicadores</h4>
@@ -114,19 +128,23 @@
             <form action="/api/upload-data" method="POST" enctype="multipart/form-data">
                 <div class="custom-form-group">
                     <h5 class="text-dark mb-3">Subir Archivo de Datos (CSV/Excel)</h5>
-                    
+
                     <div class="d-flex align-items-center gap-3">
-                        <input class="form-control" type="file" id="archivoData" name="datafile" accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel" required>
-                        <a href="/plantilla-indicadores.xlsx" class="btn btn-secondary flex-shrink-0" download>
+                        <input class="form-control" type="file" id="archivoData" name="datafile"
+                            accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
+                            required>
+                        <a href="/plantilla_datos.xlsx" class="btn btn-secondary flex-shrink-0" download>
                             Descargar Plantilla
                         </a>
                     </div>
-                    
-                    <small class="text-dark mt-2 d-block">El archivo debe contener columnas para "Año" y "Mes" (en español o inglés) y el nombre de tus indicadores. El sistema las detectará automáticamente.</small>
+
+                    <small class="text-dark mt-2 d-block">El archivo debe contener la columna para "Año" (en español o
+                        inglés) y los nombres de tus indicadores. El sistema los detectará automáticamente.</small>
                 </div>
 
                 <div class="mb-3">
-                    <label for="nombreIndicador" class="form-label text-dark">Nombre del Indicador (Se usa para registrar la carga)</label>
+                    <label for="nombreIndicador" class="form-label text-dark">Nombre del Indicador (Se usa para
+                        registrar la carga)</label>
                     <input type="text" class="form-control" id="nombreIndicador" name="nombreIndicador" required>
                 </div>
 
@@ -134,6 +152,7 @@
                     <label for="tipoTabla" class="form-label text-dark">Tipo de Tabla/Indicador a Actualizar</label>
                     <select class="form-select" id="tipoTabla" name="tipoTabla" required>
                         <option value="">Seleccione a dónde cargar los datos...</option>
+                        <option value="datos_radar">Datos Radar (Pulso Social)</option>
                         <option value="indicadores_sociales">Indicadores Sociales</option>
                         <option value="indicadores_educacion_cultura">Educación y Cultura</option>
                         <option value="indicadores_salud">Salud y Bienestar</option>
@@ -146,7 +165,8 @@
                     <textarea class="form-control" id="nota" name="nota" rows="3"></textarea>
                 </div>
 
-                <button type="submit" class="btn btn-primary btn-lg w-100" style="background-color: #bca986; border-color: #bca986;">
+                <button type="submit" class="btn btn-primary btn-lg w-100"
+                    style="background-color: #bca986; border-color: #bca986;">
                     Procesar y Subir Datos
                 </button>
             </form>
@@ -156,14 +176,18 @@
 
     <div class="d-flex justify-content-between align-items-center bg-light p-3 rounded-4 shadow mt-4">
         <div class="d-flex gap-3 align-items-center">
-            <img src="https://campeche.gob.mx/wp-content/uploads/2023/04/logoh.png" alt="Gobierno de Campeche" class="logo">
-            <img src="https://cedyc.campeche.gob.mx/wp-content/uploads/2023/05/Gabinete/curriculum/Logo_cedyc_horizontal.svg" alt="CEDYC" class="logo">
-            <img src="https://th.bing.com/th/id/R.70f86f90b79935c5277de32f0cc535a0?rik=vvSvN%2b8aZjkeOA&riu=http%3a%2f%2fsic.gob.mx%2fimages%2f62651&ehk=Dr1LAHN94y5xu2OBSHc0b4%2ftnzTECmGHPSds9ZqT4lY%3d&risl=&pid=ImgRaw&r=0" alt="Tecnológico de Chiná" class="logo">
-            <img src="https://extranet.inegi.org.mx/assets/img/Imagen_Institucional/Logos/Logo4.jpg" alt="INEGI" class="logo">
+            <img src="https://campeche.gob.mx/wp-content/uploads/2023/04/logoh.png" alt="Gobierno de Campeche"
+                class="logo">
+            <img src="https://cedyc.campeche.gob.mx/wp-content/uploads/2023/05/Gabinete/curriculum/Logo_cedyc_horizontal.svg"
+                alt="CEDYC" class="logo">
+            <img src="https://th.bing.com/th/id/R.70f86f90b79935c5277de32f0cc535a0?rik=vvSvN%2b8aZjkeOA&riu=http%3a%2f%2fsic.gob.mx%2fimages%2f62651&ehk=Dr1LAHN94y5xu2OBSHc0b4%2ftnzTECmGHPSds9ZqT4lY%3d&risl=&pid=ImgRaw&r=0"
+                alt="Tecnológico de Chiná" class="logo">
+            <img src="https://extranet.inegi.org.mx/assets/img/Imagen_Institucional/Logos/Logo4.jpg" alt="INEGI"
+                class="logo">
             <img src="https://educacioncampeche.gob.mx/img/logo.png" alt="SEDUC" class="logo">
         </div>
     </div>
-    
+
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             const urlParams = new URLSearchParams(window.location.search);
@@ -173,17 +197,18 @@
             if (successMessage) {
                 // Muestra un mensaje de éxito
                 alert(`✅ Éxito: ${decodeURIComponent(successMessage)}`);
-                
+
                 // Limpia la URL después de mostrar el mensaje para evitar re-mostrarlo al recargar
                 window.history.replaceState(null, null, window.location.pathname);
             } else if (errorMessage) {
                 // Muestra un mensaje de error
                 alert(`❌ Error: ${decodeURIComponent(errorMessage)}`);
-                
+
                 // Limpia la URL después de mostrar el mensaje
                 window.history.replaceState(null, null, window.location.pathname);
             }
         });
     </script>
 </body>
+
 </html>

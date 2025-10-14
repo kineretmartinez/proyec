@@ -71,6 +71,13 @@
     </div>
   </header>
 
+   <!-- ⚠️ MENSAJE DE AÑO SIN DATOS -->
+  <% if (mensaje) { %>
+    <div class="alert alert-warning text-center mt-3 fw-bold">
+      <%= mensaje %>
+    </div>
+  <% } %>
+
   <!-- Menú lateral desplegable -->
   <div class="offcanvas offcanvas-end" tabindex="-1" id="menuAdmin" aria-labelledby="menuAdminLabel">
     <div class="offcanvas-header">
@@ -103,14 +110,15 @@
           </a>
         </li>
         <li class="list-group-item">
-          <label for="filtroAno" class="form-label fw-bold">📅 Año:</label>
-          <select id="filtroAno" class="form-select">
-            <option value="2025">2025</option>
-            <option value="2024">2024</option>
-            <option value="2023">2023</option>
-            <option value="2022">2022</option>
-            <option value="2021">2021</option>
-            <option value="2020">2020</option>
+          <label for="filtroAño" class="form-label fw-bold">📅 Año:</label>
+          <select id="filtroAño" class="form-select">
+            <!--<option value="2025" <%= currentYear == '2025' ? 'selected' : '' %>>2026</option>-->
+            <option value="2025" <%= currentYear == '2025' ? 'selected' : '' %>>2025</option>
+            <option value="2024" <%= currentYear == '2024' ? 'selected' : '' %>>2024</option>
+            <option value="2023" <%= currentYear == '2023' ? 'selected' : '' %>>2023</option>
+            <option value="2022" <%= currentYear == '2022' ? 'selected' : '' %>>2022</option>
+            <option value="2021" <%= currentYear == '2021' ? 'selected' : '' %>>2021</option>
+            <option value="2020" <%= currentYear == '2020' ? 'selected' : '' %>>2020</option>
           </select>
         </li>
       </ul>
@@ -148,25 +156,26 @@
                         <div class="col-md-3">
                             <div class="card text-center p-3 shadow-lg">
                                 <h5>Esperanza de Vida</h5>
-                                <h2><%= indicadores.esperanza_de_vida %> años</h2>
+                               <h2><%= (indicadores && indicadores.esperanza_de_vida) ? indicadores.esperanza_de_vida : 'Sin dato' %> años</h2>
+
                             </div>
                         </div>
                         <div class="col-md-3">
                             <div class="card text-center p-3 shadow-lg">
                                 <h5>Tasa de Alfabetización</h5>
-                                <h2><%= indicadores.tasa_alfabetizacion %>%</h2>
+                                <h2><%= (indicadores && indicadores.tasa_alfabetizacion) ? indicadores.tasa_alfabetizacion : 'Sin dato' %>%</h2>
                             </div>
                         </div>
                         <div class="col-md-3">
                             <div class="card text-center p-3 shadow-lg">
                                 <h5>Pobreza Estatal</h5>
-                                <h2><%= indicadores.pobreza_estatal %>%</h2>
+                                <h2><%= (indicadores && indicadores.pobreza_estatal) ? indicadores.pobreza_estatal : 'Sin dato' %>%</h2>
                             </div>
                         </div>
                         <div class="col-md-3">
                             <div class="card text-center p-3 shadow-lg">
                                 <h5>Policías por 100k hab.</h5>
-                                <h2><%= indicadores.policias_por_habitante %></h2>
+                                <h2><%= (indicadores && indicadores.policias_por_habitante) ? indicadores.policias_por_habitante : 'Sin dato' %></h2>
                             </div>
                         </div>
                     </div>
@@ -209,7 +218,7 @@
                                 <h5>Médicos por 100k hab.</h5>
                                 <div class="gauge-chart-container">
                                     <canvas id="medicosGauge"></canvas>
-                                    <h2 class="gauge-value"><%= saludBienestar.medicos_por_habitante %></h2>
+                                    <h2 class="gauge-value"><%= (saludBienestar && saludBienestar.medicos_por_habitante) ? saludBienestar.medicos_por_habitante : 'Sin dato' %></h2>
                                 </div>
                             </div>
                         </div>
@@ -280,6 +289,18 @@
     </main>
 
     <script>
+    document.addEventListener('DOMContentLoaded', () => {
+        // 1. Lógica del Selector de Año 
+        const yearSelector = document.getElementById('filtroAño');
+
+        yearSelector.addEventListener('change', function() {
+            const selectedYear = this.value;
+            // Recargar la página con el año seleccionado como parámetro en la URL
+            window.location.href = `/?Año=${selectedYear}`;
+        });
+        
+        // 2. Inicialización de Gráficas y Variables.
+
         // Datos desde el servidor (inyectados por EJS)
         const user = <%- typeof user !== 'undefined' ? JSON.stringify(user) : '{}' %>;
         const indicadores = <%- JSON.stringify(indicadores) %>;
@@ -288,8 +309,6 @@
         const educacionCultura = <%- JSON.stringify(educacionCultura) %>;
         const saludBienestar = <%- JSON.stringify(saludBienestar) %>;
         const inclusionViviendaSeguridad = <%- JSON.stringify(inclusionViviendaSeguridad) %>;
-
-        // NOTA: Se eliminó el bloque de fetch/API, ya que no se usará.
 
         // Gráfico Radar (Pestaña Pulso Social)
         const ctxRadar = document.getElementById('radarChart').getContext('2d');
@@ -543,7 +562,8 @@
                 options: { responsive: true, plugins: { legend: { position: 'bottom' }, title: { display: true, text: `${participacion}%` } } }
             });
         });
-    </script>
+    });
+</script>
 </body>
 <div class="d-flex justify-content-between align-items-center bg-light p-3 rounded-4 shadow mt-4">
     <div class="d-flex gap-3 align-items-center">
