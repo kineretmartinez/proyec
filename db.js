@@ -1,10 +1,10 @@
 const mysql = require('mysql2');
 
 const pool = mysql.createPool({
-    host: 'localhost', // O la dirección de tu servidor MySQL
-    user: 'root',      // Tu usuario de MySQL
-    password: '', // Tu contraseña
-    database: 'prueba', // El nombre de tu base de datos
+    host: 'localhost', // dirección de tu servidor MySQL
+    user: 'root',      //  usuario de MySQL
+    password: '', // contraseña
+    database: 'dashboard_db', // El nombre de la base de datos
     waitForConnections: true,
     connectionLimit: 10,
     queueLimit: 0
