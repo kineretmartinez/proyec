@@ -11,8 +11,8 @@
 
     <style>
         body {
-            background-color: #9f2241;
-            /* Color principal (Rojo/Vino) */
+            background-color: #9F2241;
+            
             color: white;
         }
 
@@ -21,13 +21,12 @@
         }
 
         .offcanvas-header {
-            background-color: #9f2241;
+            background-color: #9F2241;
             color: white;
         }
 
         .menu-btn {
             background-color: #ffc107;
-            /* Amarillo de advertencia */
             color: #212529;
             font-weight: bold;
             border: none;
@@ -36,14 +35,12 @@
         .admin-card {
             background-color: #f8f9fa;
             color: #212529;
-            /* Texto negro */
             padding: 25px;
             border-radius: 15px;
         }
 
         .custom-form-group {
             background-color: #e9ecef;
-            /* Fondo gris claro */
             padding: 20px;
             border-radius: 10px;
             margin-bottom: 20px;
@@ -192,13 +189,13 @@
 
             if (successMessage) {
                 // Muestra un mensaje de éxito
-                alert(`✅ Éxito: ${decodeURIComponent(successMessage)}`);
+                alert(` Éxito: ${decodeURIComponent(successMessage)}`);
 
                 // Limpia la URL después de mostrar el mensaje para evitar re-mostrarlo al recargar
                 window.history.replaceState(null, null, window.location.pathname);
             } else if (errorMessage) {
                 // Muestra un mensaje de error
-                alert(`❌ Error: ${decodeURIComponent(errorMessage)}`);
+                alert(` Error: ${decodeURIComponent(errorMessage)}`);
 
                 // Limpia la URL después de mostrar el mensaje
                 window.history.replaceState(null, null, window.location.pathname);

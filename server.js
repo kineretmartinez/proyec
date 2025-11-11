@@ -200,7 +200,7 @@ app.get('/', verificarAcceso, async (req, res) => {
 });
 
 // RUTAS DE ADMINISTRACIÓN
-// 1. Panel de Gestión de Usuarios (SOLO ADMIN)
+//  Panel de Gestión de Usuarios (SOLO ADMIN)
 app.get('/admin/usuarios', soloAdmin, async (req, res) => {
     try {
         const [usuarios] = await db.query('SELECT id, nombre, email, rol, activo FROM usuarios');
@@ -211,12 +211,12 @@ app.get('/admin/usuarios', soloAdmin, async (req, res) => {
     }
 });
 
-// 2. Panel de Carga de Datos (ADMIN O TÉCNICO)
+//  Panel de Carga de Datos (ADMIN O TÉCNICO)
 app.get('/admin/carga-datos', soloAdminOTecnico, (req, res) => {
     res.render('admin_carga_datos', { user: req.user });
 });
 
-// 3. API para Activar/Desactivar Acceso (SOLO ADMIN)
+//  API para Activar/Desactivar Acceso (SOLO ADMIN)
 app.post('/admin/toggle-acceso/:userId', soloAdmin, async (req, res) => {
     const userId = req.params.userId;
     try {
@@ -231,7 +231,7 @@ app.post('/admin/toggle-acceso/:userId', soloAdmin, async (req, res) => {
     }
 });
 
-// 4. API para Cambiar el Rol (SOLO ADMIN)
+// API para Cambiar el Rol (SOLO ADMIN)
 app.post('/admin/set-rol/:userId', soloAdmin, async (req, res) => {
     const userId = req.params.userId;
     const { rol } = req.body;
@@ -249,7 +249,7 @@ app.post('/admin/set-rol/:userId', soloAdmin, async (req, res) => {
     }
 });
 
-// 5. API para la Carga de Archivos con Multer (ADMIN O TÉCNICO) CARGA DE ARCHIVOS (Excel/CSV)
+// API para la Carga de Archivos con Multer (ADMIN O TÉCNICO) CARGA DE ARCHIVOS (Excel/CSV)
 
 app.post('/api/upload-data', soloAdminOTecnico, upload.single('datafile'), async (req, res) => {
     if (!req.file) return res.status(400).send('No se subió ningún archivo.');
@@ -278,7 +278,7 @@ app.post('/api/upload-data', soloAdminOTecnico, upload.single('datafile'), async
             throw new Error("Formato de archivo no soportado.");
         }
 
-        // Detectar encabezados (fila 1)
+        // Detectar encabezados
         const worksheet = workbook.worksheets[0];
         const headerRow = worksheet.getRow(1);
         const headers = [];
@@ -286,10 +286,10 @@ app.post('/api/upload-data', soloAdminOTecnico, upload.single('datafile'), async
             if (cell.value) headers.push(String(cell.value).trim().toLowerCase().replace(/ /g, '_'));
         });
 
-        // Normalizar encabezados y eliminar acentos (por ejemplo, "Año" → "ano")
+        // Normalizar encabezados y eliminar acentos 
         const headerNormalizado = headers.map(h => h.normalize("NFD").replace(/[\u0300-\u036f]/g, '').toLowerCase());
 
-        // Verificar si existe la columna de año (puede ser "Año", "ano" o similar)
+        // Verificar si existe la columna de año 
         if (!headerNormalizado.includes('año') && !headerNormalizado.includes('ano') && !headerNormalizado.includes('año_')) {
             throw new Error("El archivo debe contener la columna 'Año' o 'Ano'.");
         }

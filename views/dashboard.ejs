@@ -14,7 +14,7 @@
 
   <style>
     body {
-      background-color: #9f2241;
+      background-color: #9F2241;
       color: white;
     }
     .card {
@@ -31,15 +31,15 @@
     }
     .nav-link {
       color: #fbf9f9;
-      background: #bca986; 
+      background:  #BCA986; 
       margin-right: 5px;
     }
     .nav-link.active {
-      background: #9f2241 !important;
+      background: #9F2241 !important;
       color: white !important;
     }
     .offcanvas-header {
-      background-color: #9f2241;
+      background-color: #9F2241;
       color: white;
     }
     .menu-btn {
@@ -290,7 +290,7 @@
 
     <script>
     document.addEventListener('DOMContentLoaded', () => {
-        // 1. Lógica del Selector de Año 
+        //  Lógica del Selector de Año 
         const yearSelector = document.getElementById('filtroAño');
 
         yearSelector.addEventListener('change', function() {
@@ -299,7 +299,7 @@
             window.location.href = `/?Año=${selectedYear}`;
         });
         
-        // 2. Inicialización de Gráficas y Variables.
+        //  Inicialización de Gráficas y Variables.
 
         // Datos desde el servidor (inyectados por EJS)
         const user = <%- typeof user !== 'undefined' ? JSON.stringify(user) : '{}' %>;
